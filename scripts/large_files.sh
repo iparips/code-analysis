@@ -10,9 +10,6 @@ do
     if [ ! -z "$large_files" ]
     then
       echo "Files larger than ${SIZE_THRESHOLD_KB}kb:"
-      for file in $large_files
-      do
-        ls -lah $file | awk '{print $5, $9}'
-      done
+      cloc --list-file=$large_files
     fi
 done

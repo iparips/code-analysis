@@ -1,0 +1,17 @@
+{
+  "name": "code-analysis",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server public"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "d3": "^6.5.0",
+    "directory-tree": "^2.2.6",
+    "http-server": "^0.12.3"
+  }
+}
