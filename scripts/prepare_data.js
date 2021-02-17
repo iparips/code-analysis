@@ -1,12 +1,14 @@
 const dirTree = require('directory-tree');
 const fs = require('fs');
+const {execSync} = require('child_process')
 
 const sourceDir = '***REMOVED***'
 // const sourceDir = '***REMOVED***src'
 const outputPath = 'public/data/file_hierarchy_no_next.json'
 
-const tree = dirTree(sourceDir, {exclude: /\.next/}, (item, path, stats) => {
-  item.value = Math.round(stats.size / 1024) // translating to kb
+const tree = dirTree(sourceDir, {exclude: /\.next/}, (file, path, stats) => {
+  const numberOfLines = execSync(`cat ${file.path} | sed '/^\\s*$/d' | wc -l`).toString()
+  file.value = numberOfLines
 });
 
 const treeArray = [tree]
