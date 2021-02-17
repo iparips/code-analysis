@@ -10,6 +10,6 @@ do
     if [ -n "$large_files" ]
     then
       echo "Files larger than ${SIZE_THRESHOLD_KB}kb:"
-      cloc --list-file="$large_files"
+      cloc "$large_files"
     fi
 done
