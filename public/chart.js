@@ -11,7 +11,10 @@ fetch(request).then(r => r.text()).then((data) => {
     const size = "Size: " + this.value + " LoC"
     const branchCoverage = this.getData("branchCoverage") ?
       "\nBranch Coverage: " + this.getData("branchCoverage") : ""
-    return size + branchCoverage
+    const complexity = this.getData("complexity") ?
+      "\nComplexity Violations: " + this.getData("complexity") : ""
+
+    return size + branchCoverage + complexity
   });
 
   chart.draw();
