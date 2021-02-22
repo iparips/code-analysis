@@ -6,13 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "http-server public",
-    "prep": "node scripts/prepare_treemap_data.js"
+    "prep": "npm run prep:treemap && npm run prep:hist",
+    "prep:treemap": "node scripts/prepare_treemap_data.js",
+    "prep:hist": "node scripts/prepare_historical_data.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^12.19.1",
     "d3": "^6.5.0",
+    "date-fns": "^2.17.0",
     "directory-tree": "^2.2.6",
     "dotenv": "^8.2.0",
     "http-server": "^0.12.3"
