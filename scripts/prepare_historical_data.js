@@ -7,7 +7,7 @@ const {execSync} = require('child_process')
 const codebaseDir = process.env.CODEBASE_DIR
 const testFilePattern = process.env.TEST_FILE_PATTERN || '.test.js'
 
-const OUTPUT_PATH = 'public/data/historical_data.json'
+const OUTPUT_PATH = 'public/data/'
 
 if (!codebaseDir) {
   console.log("Please set CODEBASE_DIR to proceed");
@@ -35,26 +35,38 @@ const dates = eachMonthOfInterval({
 console.log(`From first commit date: ${firstCommitDate}`);
 console.log(`To present time: ${now}`);
 
-const processDate = (acc, currentDate) => {
-  execSync(`git checkout $(git rev-list --before="${currentDate}" -n1 master) --quiet`, {cwd: codebaseDir}).toString()
+const processDate = (date) => {
+  execSync(`git checkout $(git rev-list --before="${date}" -n1 master) --quiet`, {cwd: codebaseDir}).toString()
 
   const appCloc = execSync(`cloc --not-match-f='${testFilePattern}' "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`,
     {cwd: codebaseDir}).toString()
   const testCloc = execSync(`cloc --match-f='${testFilePattern}' "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`,
     {cwd: codebaseDir}).toString()
 
-  acc[format(currentDate, "yyyy-MM-dd")] = {
+  return {
+    date: format(date, "yyyy-MM-dd"),
     appLoc: Number(appCloc),
     testLoc: Number(testCloc)
   }
-  return acc;
 }
 
-const lineOfCodeCounts = dates.reduce(processDate, {})
+const locRawData = dates.map(processDate)
+const ratios = locRawData.map((item) => {
+  const ratio = item.testLoc / item.appLoc
+  return [item.date, ratio]
+})
 
-console.log("Line of Code Counts: ", lineOfCodeCounts);
+console.log("Raw data: ", locRawData);
+console.log("Ratios: ", ratios);
 
-fs.writeFile(OUTPUT_PATH, JSON.stringify(lineOfCodeCounts, null, 2), function (err) {
+const rawFilename = `${OUTPUT_PATH}/historical_raw_data.json`
+fs.writeFile(rawFilename, JSON.stringify(locRawData, null, 2), function (err) {
   if (err) return console.log(err);
-  console.log(`Finished writing output to: ${OUTPUT_PATH}`);
+  console.log(`Finished writing output to: ${rawFilename}`)
+});
+
+const ratiosFilename = `${OUTPUT_PATH}/historical_ratios.json`
+fs.writeFile(ratiosFilename, JSON.stringify(ratios, null, 2), function (err) {
+  if (err) return console.log(err);
+  console.log(`Finished writing output to: ${ratiosFilename}`)
 });
