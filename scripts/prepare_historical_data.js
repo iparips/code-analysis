@@ -6,6 +6,7 @@ const {execSync} = require('child_process')
 
 const codebaseDir = process.env.CODEBASE_DIR
 const testFilePattern = process.env.TEST_FILE_PATTERN || '.test.js'
+const largeFileSizeThreshold = process.env.SIZE_THRESHOLD_KB || 15
 
 const OUTPUT_PATH = 'public/data/'
 
@@ -42,12 +43,17 @@ const processDate = (date) => {
     {cwd: codebaseDir}).toString()
   const testCloc = execSync(`cloc --match-f='${testFilePattern}' "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`,
     {cwd: codebaseDir}).toString()
+  const numOfLargeFiles = execSync(`find "${codebaseDir}/src" -type f -name "*.js" ! -path "*/.next/*" -size +"${largeFileSizeThreshold}"k | wc -l`, {cwd: codebaseDir}).toString()
 
-  return {
+  const record = {
     date: format(date, "yyyy-MM-dd"),
     appLoc: Number(appCloc),
-    testLoc: Number(testCloc)
+    testLoc: Number(testCloc),
+    numOfLargeFiles: Number(numOfLargeFiles)
   }
+
+  console.log("Record: ", record);
+  return record
 }
 
 const locRawData = dates.map(processDate)
@@ -56,8 +62,13 @@ const ratios = locRawData.map((item) => {
   return [item.date, ratio]
 })
 
+const largeFiles = locRawData.map((item) => {
+  return [item.date, item.numOfLargeFiles]
+})
+
 console.log("Raw data: ", locRawData);
 console.log("Ratios: ", ratios);
+console.log("Large files numbers: ", largeFiles);
 
 const rawFilename = `${OUTPUT_PATH}/historical_raw_data.json`
 fs.writeFile(rawFilename, JSON.stringify(locRawData, null, 2), function (err) {
@@ -69,4 +80,10 @@ const ratiosFilename = `${OUTPUT_PATH}/historical_ratios.json`
 fs.writeFile(ratiosFilename, JSON.stringify(ratios, null, 2), function (err) {
   if (err) return console.log(err);
   console.log(`Finished writing output to: ${ratiosFilename}`)
+});
+
+const largeFilesFilename = `${OUTPUT_PATH}/historical_large_files.json`
+fs.writeFile(largeFilesFilename, JSON.stringify(largeFiles, null, 2), function (err) {
+  if (err) return console.log(err);
+  console.log(`Finished writing output to: ${largeFilesFilename}`)
 });

@@ -11,8 +11,18 @@ const ratios = rawData.map((item) => {
   return [item.date, ratio]
 })
 
+const largeFiles = rawData.map((item) => {
+  return [item.date, item.numOfLargeFiles]
+})
+
 const ratiosFilename = `${OUTPUT_PATH}/historical_ratios.json`
 fs.writeFile(ratiosFilename, JSON.stringify(ratios, null, 2), function (err) {
   if (err) return console.log(err);
   console.log(`Finished writing output to: ${ratiosFilename}`)
+});
+
+const largeFilesFilename = `${OUTPUT_PATH}/historical_large_files.json`
+fs.writeFile(largeFilesFilename, JSON.stringify(largeFiles, null, 2), function (err) {
+  if (err) return console.log(err);
+  console.log(`Finished writing output to: ${largeFilesFilename}`)
 });
