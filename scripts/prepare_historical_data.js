@@ -8,7 +8,7 @@ const codebaseDir = process.env.CODEBASE_DIR
 const testFilePattern = process.env.TEST_FILE_PATTERN || '.test.js'
 const largeFileSizeThreshold = process.env.SIZE_THRESHOLD_KB || 15
 
-const OUTPUT_PATH = 'public/data/'
+const OUTPUT_PATH = 'public/data'
 
 if (!codebaseDir) {
   console.log("Please set CODEBASE_DIR to proceed");
@@ -37,19 +37,26 @@ console.log(`From first commit date: ${firstCommitDate}`);
 console.log(`To present time: ${now}`);
 
 const processDate = (date) => {
-  execSync(`git checkout $(git rev-list --before="${date}" -n1 master) --quiet`, {cwd: codebaseDir}).toString()
 
-  const appCloc = execSync(`cloc --not-match-f='${testFilePattern}' "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`,
-    {cwd: codebaseDir}).toString()
-  const testCloc = execSync(`cloc --match-f='${testFilePattern}' "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`,
-    {cwd: codebaseDir}).toString()
-  const numOfLargeFiles = execSync(`find "${codebaseDir}/src" -type f -name "*.js" ! -path "*/.next/*" -size +"${largeFileSizeThreshold}"k | wc -l`, {cwd: codebaseDir}).toString()
+  const commitSha = execSync(`git rev-list --before="${date}" -n1 master`,  {cwd: codebaseDir}).toString().trim()
+
+  execSync(`git checkout ${commitSha} --quiet`, {cwd: codebaseDir}).toString()
+
+  const appCloc = execSync(`cloc --not-match-f='${testFilePattern}' "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`).toString()
+
+  const testCloc = execSync(`cloc --match-f='${testFilePattern}' "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`).toString()
+
+  const numOfLargeFiles = execSync(`find src -type f -name "*.js" ! -path "*/.next/*" -size +"${largeFileSizeThreshold}"k | wc -l`, {cwd: codebaseDir}).toString()
+
+  const numOfEslintIgnores = execSync(`find src -type f -name "*.js" ! -path "*.next/*" | xargs grep eslint-disable | wc -l`, {cwd: codebaseDir}).toString()
 
   const record = {
+    commitSha,
     date: format(date, "yyyy-MM-dd"),
     appLoc: Number(appCloc),
     testLoc: Number(testCloc),
-    numOfLargeFiles: Number(numOfLargeFiles)
+    numOfLargeFiles: Number(numOfLargeFiles),
+    numOfEslintIgnores: Number(numOfEslintIgnores)
   }
 
   console.log("Record: ", record);
@@ -64,6 +71,10 @@ const ratios = locRawData.map((item) => {
 
 const largeFiles = locRawData.map((item) => {
   return [item.date, item.numOfLargeFiles]
+})
+
+const eslintIgnores = locRawData.map((item) => {
+  return [item.date, item.numOfEslintIgnores]
 })
 
 console.log("Raw data: ", locRawData);
@@ -86,4 +97,10 @@ const largeFilesFilename = `${OUTPUT_PATH}/historical_large_files.json`
 fs.writeFile(largeFilesFilename, JSON.stringify(largeFiles, null, 2), function (err) {
   if (err) return console.log(err);
   console.log(`Finished writing output to: ${largeFilesFilename}`)
+});
+
+const eslintIgnoresFilename = `${OUTPUT_PATH}/historical_eslint_ignores.json`
+fs.writeFile(eslintIgnoresFilename, JSON.stringify(eslintIgnores, null, 2), function (err) {
+  if (err) return console.log(err);
+  console.log(`Finished writing output to: ${eslintIgnoresFilename}`)
 });

@@ -15,3 +15,12 @@ fetch('http://localhost:8080/data/historical_large_files.json').then(r => r.text
   chart.container("largeFiles");
   chart.draw();
 });
+
+fetch('http://localhost:8080/data/historical_eslint_ignores.json').then(r => r.text()).then((dataStr) => {
+  const data = JSON.parse(dataStr);
+  console.log(data);
+  const chart = anychart.line(data);
+  chart.title("Number of eslint ignores over time");
+  chart.container("eslintIgnores");
+  chart.draw();
+});
