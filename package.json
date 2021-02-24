@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "http-server public",
     "prep": "npm run prep:treemap && npm run prep:hist",
-    "prep:treemap": "node scripts/prepare_treemap_data.js",
-    "prep:hist": "node scripts/prepare_historical_data.js",
-    "prep:hist:file": "node scripts/prepare_historical_ratios_from_file.js"
+    "prep:treemap": "node scripts/js/current_data/index.js",
+    "prep:hist": "node scripts/js/historical_data/index.js",
+    "prep:hist:file": "node scripts/js/historical_data/prepare_historical_ratios_from_file.js"
   },
   "author": "",
   "license": "ISC",

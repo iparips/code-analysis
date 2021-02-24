@@ -16,7 +16,3 @@ const parseComplexityViolations = (eslintJson) => selectComplexityViolations(esl
 module.exports = {
   parseComplexityViolations
 }
-
-// const eslintViolations = JSON.parse(fs.readFileSync('/Users/ilya/Code/move/rdc-x/eslint.json').toString())
-// const complexityViolations = parseComplexityViolations(eslintViolations)
-// console.log(complexityViolations)
