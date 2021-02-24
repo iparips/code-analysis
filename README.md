@@ -8,7 +8,7 @@
 - Make sure you use the version of node specified in .nvmrc
 - Install dependencies `npm i`
 - Collect complexity metrics from the target codebase by executing
-    `npx eslint --rule 'complexity: ['error', { max: 10 }]' --format json --output-file eslint.json --no-inline-config src`
+    `npx eslint --rule 'complexity: ['error', { max: 1 }]' --format json --output-file eslint.json --no-inline-config src`
 - In target codebase jest config (eg: jest.config.js), add json-summary reporter, and run coverage target
     `coverageReporters: [ ..., 'json-summary']`
 
