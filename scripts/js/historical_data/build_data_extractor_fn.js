@@ -21,9 +21,9 @@ const buildDataExtractorFn = (
     return undefined
   }
 
-  const appCloc = execSync(`cloc --not-match-f='${testFilePattern}' "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`).toString()
+  const appCloc = execSync(`cloc --not-match-f='${testFilePattern}' --exclude-dir=".next" "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`).toString()
 
-  const testCloc = execSync(`cloc --match-f='${testFilePattern}' "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`).toString()
+  const testCloc = execSync(`cloc --match-f='${testFilePattern}' --exclude-dir=".next" "${codebaseDir}/src" --quiet --json | jq '.JavaScript.code'`).toString()
 
   const numOfLargeFiles = execSync(`find ${codebaseDir}/src -type f -name "*.js" ! -path "*/.next/*" -size +"${largeFileSizeThreshold}"k | wc -l`).toString()
 
