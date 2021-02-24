@@ -10,8 +10,8 @@ fetch('http://localhost:8080/data/file_hierarchy_by_size.json').then(r => r.text
     const size = this.getData('loc') ? "Size: " + this.getData('loc') + " LoC" : ""
     const branchCoverage = this.getData("branchCoverage") ?
       "\nBranch Coverage: " + this.getData("branchCoverage") : ""
-    const complexity = this.getData("complexity") ?
-      "\nComplexity Violations: " + this.getData("complexityMessages") : ""
+    const complexity = this.getData("complexityAggregateValue") ?
+      "\nComplexity Aggregate Value: " + this.getData("complexityAggregateValue") : ""
 
     return size + branchCoverage + complexity
   });

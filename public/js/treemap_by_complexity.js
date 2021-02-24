@@ -10,9 +10,7 @@ fetch('http://localhost:8080/data/file_hierarchy_by_complexity.json').then(r => 
     const size = this.getData('loc') ? "Size: " + this.getData('loc') + " LoC" : ""
     const branchCoverage = this.getData("branchCoverage") ?
       "\nBranch Coverage: " + this.getData("branchCoverage") : ""
-    const complexity = this.getData("complexity") ?
-      "\nComplexity Violations: " + this.getData("complexityMessages") : ""
-    return size + branchCoverage + complexity
+    return size + branchCoverage
   });
 
   chart.draw();

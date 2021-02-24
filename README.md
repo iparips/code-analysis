@@ -1,5 +1,6 @@
-# TODO
-- [ ] Make the current state graph toggle box sizes based on file size and complexity
+# Overview
+
+This is a tool for analysing codebases, and visualising historical, and a point in time view of metrics relating to code quality.
 
 # Pre-requisites
 
@@ -15,13 +16,9 @@
 # Usage
 
 Set the following env variables with absolute paths:
-- TREEMAP_ROOT_DIR 
+- TREEMAP_ROOT_DIR - source directory at root of the filesize / complexity tree map
 - COVERAGE_SUMMARY_JSON_DIR
 - ESLINT_VIOLATIONS_JSON
-- CODEBASE_DIR
+- CODEBASE_DIR - project dir of the codebase under assessment
   
 Then execute `npm run prep && npm start`
-
-# Issues
-
-- When generating historical data, sometimes the first commit sha is empty
